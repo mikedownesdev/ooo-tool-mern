@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Employee = require('../models/Employee');
+const bcrypt = require('bcryptjs');
 
 /**
  * Registers a new User and creates a new Employee linked to that user.
@@ -25,10 +26,13 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ msg: 'User already exists' });
         }
 
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         // Create a new user
         user = new User({
             email,
-            password, // Note: In a real-world application, you should hash the password before storing it
+            password: hashedPassword
         });
 
         await user.save();
