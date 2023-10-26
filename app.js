@@ -16,6 +16,17 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
+const dbUrl = process.env.MONGO_DB_URL;
+
+mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+    console.log('Connected to MongoDB');
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });
