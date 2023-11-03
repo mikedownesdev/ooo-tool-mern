@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 /**
  * Registers a new User and creates a new Employee linked to that user.
@@ -48,7 +49,23 @@ const registerUser = async (req, res) => {
 
         await employee.save();
 
-        res.json({ user, employee });
+        // Generate a JWT
+        const payload = {
+            user: { id: user.id, },
+            employee: { id: employee.id, }
+        };
+
+        // res.json({ user, employee });
+        jwt.sign(
+            payload,                        // The encoded data
+            process.env.JWT_SECRET,        // The secret key
+            { expiresIn: '1h' },
+            (err, token) => {
+                if (err) throw err;
+                res.json({ token });
+            }
+        );
+
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
