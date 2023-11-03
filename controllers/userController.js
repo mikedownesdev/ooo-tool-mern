@@ -19,6 +19,7 @@ const jwt = require('jsonwebtoken');
  */
 const registerUser = async (req, res) => {
     const { email, password, firstName, lastName, team, salaried } = req.body;
+    console.log(req.body)
 
     try {
         // Check if the user already exists
@@ -36,7 +37,7 @@ const registerUser = async (req, res) => {
             password: hashedPassword
         });
 
-        await user.save();
+        // await user.save();
 
         // Create a new employee linked to the user
         const employee = new Employee({
@@ -47,7 +48,7 @@ const registerUser = async (req, res) => {
             salaried,
         });
 
-        await employee.save();
+        // await employee.save();
 
         // Generate a JWT
         const payload = {
