@@ -9,10 +9,15 @@ const {
     updateUserProfile
 } = require('../controllers/userController');
 
+// Import the auth middleware
+const authMiddleware = require('../middleware/auth');
+
 // Define routes for user management
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.get('/profile', getUserProfile);
-router.put('/profile', updateUserProfile);
+
+// Apply the auth middleware to the routes that require authentication
+router.get('/profile', authMiddleware, getUserProfile);
+router.put('/profile', authMiddleware, updateUserProfile);
 
 module.exports = router;
