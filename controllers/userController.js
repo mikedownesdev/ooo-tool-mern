@@ -18,7 +18,7 @@ const jwt = require('jsonwebtoken');
  * @throws {Error} - If the username already exists or if there's a server error.
  */
 const registerUser = async (req, res) => {
-    const { email, password, firstName, lastName, team, salaried } = req.body;
+    const { email, password, firstName, lastName } = req.body;
     console.log(req.body)
 
     try {
@@ -37,18 +37,16 @@ const registerUser = async (req, res) => {
             password: hashedPassword
         });
 
-        // await user.save();
+        await user.save();
 
         // Create a new employee linked to the user
         const employee = new Employee({
             user: user._id,
             firstName,
             lastName,
-            team,
-            salaried,
         });
 
-        // await employee.save();
+        await employee.save();
 
         // Generate a JWT
         const payload = {
@@ -74,18 +72,90 @@ const registerUser = async (req, res) => {
 };
 
 // Controller function for user login
-const loginUser = (req, res) => {
-    // Implement user login logic here
+const loginUser = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        // Check if the user existsc
+        let user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        // Compare the provided password with the stored hashed password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        // Generate a JWT
+        const payload = {
+            user: {
+                id: user.id,
+            },
+        };
+
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' },
+            (err, token) => {
+                if (err) throw err;
+                res.json({ token });
+            }
+        );
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
 };
 
 // Controller function to get user profile
-const getUserProfile = (req, res) => {
-    // Implement user profile retrieval logic here
+const getUserProfile = async (req, res) => {
+    try {
+        // Get user from database
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
 };
 
 // Controller function to update user profile
-const updateUserProfile = (req, res) => {
-    // Implement user profile update logic here
+const updateUserProfile = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        // Get user from database
+        let user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        // Update user's email and password
+        if (email) {
+            user.email = email;
+        }
+
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
+        }
+
+        // Save the updated user
+        await user.save();
+
+        res.json({ msg: 'User profile updated successfully' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
 };
 
 // Export the controller functions
