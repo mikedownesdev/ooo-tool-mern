@@ -7,6 +7,7 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 const usersRouter = require('./routes/users');
+const teamsRouter = require('./routes/teams');
 
 
 app.use(cors());
@@ -18,6 +19,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/users', usersRouter);
+app.use('/teams', teamsRouter);
 
 
 app.get('/', (req, res) => {
