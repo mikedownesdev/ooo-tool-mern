@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-// const RefreshToken = require('../models/RefreshToken');
+const RefreshToken = require('../models/RefreshToken');
 
 const signToken = (payload, secret, options) => {
     return new Promise((resolve, reject) => {
@@ -25,28 +25,26 @@ const generateRefreshToken = (payload) => {
     return signToken(payload, secret, options);
 }
 
+const calculateExpiryDate = (days) => {
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + days);
+    return expiryDate;
+};
 
+const invalidateRefreshToken = async (refreshToken) => {
+    try {
+        // Remove the refresh token from the database
+        await RefreshToken.findOneAndDelete({ token: refreshToken });
 
-const invalidateRefreshToken = async (token) => {
-    // If you're storing refresh tokens in a database, you would need to remove
-    // the token from the database. If you're using a cache like Redis, you
-    // would need to remove the token from the cache.
-
-    // Here's an example of how you might implement invalidateRefreshToken
-    // if you're storing refresh tokens in a MongoDB database:
-
-    // try {
-    //     // Remove the refresh token from the database
-    //     await RefreshToken.findOneAndDelete({ token });
-
-    // } catch (err) {
-    //     console.error(err.message);
-    //     throw new Error('Server error');
-    // }
+    } catch (err) {
+        console.error(err.message);
+        throw new Error('Server error');
+    }
 };
 
 module.exports = {
     generateAccessToken,
     generateRefreshToken,
+    calculateExpiryDate,
     invalidateRefreshToken
 };

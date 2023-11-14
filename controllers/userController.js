@@ -35,7 +35,7 @@ const updateUserProfile = async (req, res) => {
         }
 
         if (password) {
-            user.password = hashPassword(password);
+            user.password = await hashPassword(password);
         }
 
         // Save the updated user

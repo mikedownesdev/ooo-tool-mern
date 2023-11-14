@@ -1,9 +1,15 @@
 const User = require('../models/User');
 const Employee = require('../models/Employee');
+const RefreshToken = require('../models/RefreshToken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { hashPassword } = require('../utils/password');
-const { generateAccessToken, generateRefreshToken, invalidateRefreshToken } = require('../utils/auth');
+const {
+    generateAccessToken,
+    generateRefreshToken,
+    calculateExpiryDate,
+    invalidateRefreshToken,
+} = require('../utils/auth');
 
 // Controller function for user registration`
 const registerUser = async (req, res) => {
@@ -20,7 +26,7 @@ const registerUser = async (req, res) => {
         // Create a new user
         user = new User({
             email,
-            password: hashPassword(password)
+            password: await hashPassword(password)
         });
 
         await user.save();
@@ -42,13 +48,15 @@ const registerUser = async (req, res) => {
         const accessToken = await generateAccessToken(payload);
         const refreshToken = await generateRefreshToken(payload);
 
+        await RefreshToken.create({ token: refreshToken, user: user._id, expires: calculateExpiryDate(7) });
+
         res.json({
             accessToken,
             refreshToken,
         });
 
     } catch (err) {
-        console.error(err.message);
+        console.error(err);
         res.status(500).send('Server error');
     }
 };
@@ -97,13 +105,30 @@ const refreshToken = async (req, res) => {
     try {
         // Verify the refresh token
         const payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const storedToken = await RefreshToken.findOne({ token: refreshToken });
+
+        console.log(storedToken)
+        console.log(payload)
+
+        if (!storedToken) {
+            console.error('Refresh token not found in database');
+            throw new Error('Invalid refresh token');
+        }
+        if (storedToken.user.toString() !== payload.user.id) {
+            console.error('User ID in refresh token payload does not match user ID in database');
+            throw new Error('Invalid refresh token');
+        }
+        if (storedToken.expires < Date.now()) {
+            console.error('Refresh token has expired');
+            throw new Error('Invalid refresh token');
+        }
 
         // Generate a new JWT
         const accessToken = await generateAccessToken({ user: { id: payload.user.id } });
 
         res.json({ accessToken });
     } catch (err) {
-        console.error(err);
+        console.error('Error in refreshToken function:', err);
         res.status(401).json({ msg: 'Invalid refresh token' });
     }
 }
@@ -113,8 +138,7 @@ const logoutUser = async (req, res) => {
         // Get the refresh token from the request
         const { refreshToken } = req.body;
 
-        // Invalidate the refresh token in your database or cache
-        // This is a placeholder code, replace it with your actual implementation
+        // Invalidate the refresh token by deleting it from the database
         await invalidateRefreshToken(refreshToken);
 
         res.json({ msg: 'User logged out successfully' });
