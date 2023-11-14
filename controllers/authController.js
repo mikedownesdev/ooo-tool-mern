@@ -14,13 +14,18 @@ const {
 // Controller function for user registration`
 const registerUser = async (req, res) => {
     const { email, password, firstName, lastName } = req.body;
-    console.log(req.body)
+
+    // Start a new session to enable atomic transactions
+    const session = await mongoose.startSession();
 
     try {
+        // Start a the user creation transaction
+        session.startTransaction();
+
         // Check if the user already exists
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email }).session(session);
         if (user) {
-            return res.status(400).json({ msg: 'User already exists' });
+            throw new Error('User already exists');
         }
 
         // Create a new user
@@ -29,7 +34,7 @@ const registerUser = async (req, res) => {
             password: await hashPassword(password)
         });
 
-        await user.save();
+        await user.save({ session });
 
         // Create a new employee linked to the user
         const employee = new Employee({
@@ -38,7 +43,7 @@ const registerUser = async (req, res) => {
             lastName,
         });
 
-        await employee.save();
+        await employee.save({ session });
 
         // Generate a JWT
         const payload = {
@@ -48,7 +53,10 @@ const registerUser = async (req, res) => {
         const accessToken = await generateAccessToken(payload);
         const refreshToken = await generateRefreshToken(payload);
 
-        await RefreshToken.create({ token: refreshToken, user: user._id, expires: calculateExpiryDate(7) });
+        await RefreshToken.create({ token: refreshToken, user: user._id, expires: calculateExpiryDate(7) }, { session });
+
+        // Commit the transaction
+        await session.commitTransaction();
 
         res.json({
             accessToken,
@@ -56,8 +64,14 @@ const registerUser = async (req, res) => {
         });
 
     } catch (err) {
+        // Abort the transaction if any errors occur
+        await session.abortTransaction();
+
         console.error(err);
         res.status(500).send('Server error');
+    } finally {
+        // End the session to release resources
+        session.endSession();
     }
 };
 
@@ -106,9 +120,6 @@ const refreshToken = async (req, res) => {
         // Verify the refresh token
         const payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
         const storedToken = await RefreshToken.findOne({ token: refreshToken });
-
-        console.log(storedToken)
-        console.log(payload)
 
         if (!storedToken) {
             console.error('Refresh token not found in database');
