@@ -8,6 +8,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const usersRouter = require('./routes/users');
 const teamsRouter = require('./routes/teams');
+const authRoutes = require('./routes/auth');
 
 
 app.use(cors());
@@ -18,6 +19,7 @@ app.use((req, res, next) => {
     next(); // Continue with the request handling
 });
 
+app.use('/auth', authRoutes);
 app.use('/users', usersRouter);
 app.use('/teams', teamsRouter);
 
