@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 const RefreshToken = require('../models/RefreshToken');
@@ -53,7 +54,13 @@ const registerUser = async (req, res) => {
         const accessToken = await generateAccessToken(payload);
         const refreshToken = await generateRefreshToken(payload);
 
-        await RefreshToken.create({ token: refreshToken, user: user._id, expires: calculateExpiryDate(7) }, { session });
+        const storedToken = new RefreshToken({
+            token: refreshToken,
+            user: user._id,
+            expires: calculateExpiryDate(7)
+        });
+
+        await storedToken.save({ session });
 
         // Commit the transaction
         await session.commitTransaction();
@@ -101,6 +108,15 @@ const loginUser = async (req, res) => {
 
         const accessToken = await generateAccessToken(payload);
         const refreshToken = await generateRefreshToken(payload);
+
+        // Invalidate the old refresh token
+        const oldRefreshToken = await RefreshToken.findOne({ user: user._id });
+        if (oldRefreshToken) {
+            await invalidateRefreshToken(oldRefreshToken.token);
+        }
+
+        // Persist the new refresh token
+        await RefreshToken.create({ token: refreshToken, user: user._id, expires: calculateExpiryDate(7) });
 
         res.json({
             accessToken,
