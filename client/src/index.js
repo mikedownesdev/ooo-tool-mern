@@ -4,8 +4,8 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom"
-import Root from "./routes/root";
-import NewRequest from "./routes/NewRequest";
+import Root, { loader as rootLoader } from "./routes/root";
+import NewRequest, { action as newRequestAction } from "./routes/NewRequest";
 import ErrorPage from "./error-page";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -16,10 +16,12 @@ const router = createBrowserRouter([
     path: "/",
     element: <Root />,
     errorElement: <ErrorPage />,
+    loader: rootLoader,
     children: [
       {
         path: "requests/new",
         element: <NewRequest />,
+        action: newRequestAction,
       },
       {
         path: "settings",

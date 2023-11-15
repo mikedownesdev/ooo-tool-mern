@@ -1,24 +1,31 @@
 import React, { useState } from 'react';
+import { Form } from 'react-router-dom';
+import { createRequest } from '../services/createRequest';
 
-function NewRequest() {
+export async function action() {
+    const request = await createRequest()
+    return { request };
+}
+
+export default function NewRequest() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [reason, setReason] = useState('');
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // Here you would usually make an API call to the backend to save the request
-        console.log('Out of Office Request:', { startDate, endDate, reason });
-        // Reset the form fields
-        setStartDate('');
-        setEndDate('');
-        setReason('');
-    };
+    // const handleSubmit = (event) => {
+    //     event.preventDefault();
+    //     // Here you would usually make an API call to the backend to save the request
+    //     console.log('Out of Office Request:', { startDate, endDate, reason });
+    //     // Reset the form fields
+    //     setStartDate('');
+    //     setEndDate('');
+    //     setReason('');
+    // };
 
     return (
         <div className="out-of-office-request">
             <h2>New Out of Office Request</h2>
-            <form onSubmit={handleSubmit}>
+            <Form method='post'>
                 <div className="form-group">
                     <label htmlFor="start-date">Start Date</label>
                     <input
@@ -49,9 +56,7 @@ function NewRequest() {
                     />
                 </div>
                 <button type="submit">Submit Request</button>
-            </form>
+            </Form>
         </div>
     );
 }
-
-export default NewRequest;
