@@ -1,8 +1,10 @@
+import { Outlet, Link } from "react-router-dom";
+
 export default function Root() {
     return (
         <>
             <div id="sidebar">
-                <h1>React Router Contacts</h1>
+                <h1>Time Off Request App</h1>
                 <div>
                     <form id="search-form" role="search">
                         <input
@@ -29,15 +31,20 @@ export default function Root() {
                 <nav>
                     <ul>
                         <li>
-                            <a href={`/contacts/1`}>Your Name</a>
+                            <a href={`/`}>Home</a>
                         </li>
                         <li>
-                            <a href={`/contacts/2`}>Your Friend</a>
+                            <a href={`/requests/new`}>New Request</a>
+                        </li>
+                        <li>
+                            <a href={`/settings`}>Settings</a>
                         </li>
                     </ul>
                 </nav>
             </div>
-            <div id="detail"></div>
+            <div id="detail">
+                <Outlet />
+            </div>
         </>
     );
 }
