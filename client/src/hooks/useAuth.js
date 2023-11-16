@@ -1,15 +1,25 @@
-import { createContext, useContext, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
+import { createContext, useCallback, useContext, useMemo } from "react"
 import { useLocalStorage } from "./useLocalStorage"
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useLocalStorage("user", null);
-    const navigate = useNavigate();
+export const useAuth = () => {
+    return useContext(AuthContext);
+};
 
-    const login = async (email, password) => {
-        // Make a request to the login route
+
+export const AuthProvider = ({ children }) => {
+    // const [user, setUser] = useState(null)
+    const [user, setUser] = useLocalStorage("user", null);
+
+    /**
+     * Logs in a user with the provided email and password.
+     *
+     * @param {string} email - The user's email.
+     * @param {string} password - The user's password.
+     */
+    const login = useCallback(async (email, password) => {
+        //Make a request to the login route
         const response = await fetch("auth/login", {
             method: "POST",
             headers: {
@@ -18,19 +28,21 @@ export const AuthProvider = ({ children }) => {
             body: JSON.stringify({ email, password }),
         });
 
-        const data = await response.json();
+        const { data } = await response.json();
 
         if (response.ok) {
-            // If the login was successful, store the user in state
+            console.log('setting user', data.user)
             setUser(data.user);
-            navigate("/")
         } else {
-            // If the login was unsuccessful, throw an error
             throw new Error(data.message);
         }
-    }
+        return response
+    }, [setUser])
 
-    const logout = async () => {
+    /**
+     * Logs out the current user
+     */
+    const logout = useCallback(async () => {
         // Make a request to the logout route
         const response = await fetch("auth/logout", {
             method: "POST",
@@ -40,20 +52,13 @@ export const AuthProvider = ({ children }) => {
         });
 
         if (response.ok) {
-            // If the logout was successful, remove the user from state
             setUser(null);
-            navigate("/login");
         } else {
-            // If the logout was unsuccessful, throw an error
             throw new Error("Something went wrong");
         }
-    }
+    }, [setUser]);
 
-    const value = useMemo(() => ({ user, login, logout }), [user]);
+    const value = useMemo(() => ({ user, login, logout }), [user, login, logout]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
-export const useAuth = () => {
-    return useContext(AuthContext);
-};

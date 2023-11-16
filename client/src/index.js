@@ -10,13 +10,15 @@ import ErrorPage from "./error-page";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Login from './routes/Login';
+import { ProtectedRoute } from './routes/ProtectedRoute';
+import { AuthProvider } from './hooks/useAuth';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
-    errorElement: <ErrorPage />,
+    element: <ProtectedRoute><Root /></ProtectedRoute>,
     loader: rootLoader,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "requests/new",
@@ -39,7 +41,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
     {/* <App /> */}
   </React.StrictMode>
 );

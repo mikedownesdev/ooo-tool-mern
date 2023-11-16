@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+    const { login } = useAuth();
+    const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Here you would usually call an authentication service
-        console.log('Logging in with:', username, password);
-        // Reset the fields after submission for this example
-        setUsername('');
-        setPassword('');
+
+        login(username, password)
+            .then((res) => {
+                navigate('/')
+            }).catch((err) => {
+                console.error('error', err);
+            });
+
     };
 
     return (

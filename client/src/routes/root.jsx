@@ -1,13 +1,25 @@
-import { Outlet, Link, useLoaderData } from "react-router-dom";
-import { getSomeData } from "../services/getSomeData"
+import { Outlet, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
-export async function loader() {
-    const someData = await getSomeData()
-    return { someData };
-}
+export const loader = async () => {
+    return [
+        { msg: "Hello world!" }
+    ]
+};
 
 export default function Root() {
-    const { someData } = useLoaderData();
+    // const data = useLoaderData();
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = (event) => {
+        event.preventDefault();
+
+        logout()
+        navigate('/login');
+
+    };
     return (
         <>
             <div id="sidebar">
@@ -35,22 +47,6 @@ export default function Root() {
                         <button type="submit">New</button>
                     </form>
                 </div>
-                <div>
-                    <h2>Some Data</h2>
-                    {someData.length ? (
-                        <ul>
-                            {someData.map((data) => (
-                                <li key={data.id}>
-                                    <Link to={`/some-data/${data.id}`}>
-                                        {data.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No data found</p>
-                    )}
-                </div>
                 <nav>
                     <ul>
                         <li>
@@ -63,6 +59,11 @@ export default function Root() {
                             <a href={`/settings`}>Settings</a>
                         </li>
                     </ul>
+                    <form onSubmit={handleLogout}>
+                        <button>
+                            Logout
+                        </button>
+                    </form>
                 </nav>
             </div>
             <div id="detail">
