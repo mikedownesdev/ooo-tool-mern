@@ -119,8 +119,15 @@ const loginUser = async (req, res) => {
         await RefreshToken.create({ token: refreshToken, user: user._id, expires: calculateExpiryDate(7) });
 
         res.json({
-            accessToken,
-            refreshToken,
+            message: "success",
+            data: {
+                accessToken,
+                refreshToken,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                }
+            }
         });
 
     } catch (err) {
