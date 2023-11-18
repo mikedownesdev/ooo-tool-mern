@@ -24,10 +24,6 @@ app.use('/users', usersRouter);
 app.use('/teams', teamsRouter);
 
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
-
 const dbUrl = process.env.MONGO_DB_URL;
 
 mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true });

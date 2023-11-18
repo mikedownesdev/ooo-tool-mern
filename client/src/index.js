@@ -10,6 +10,7 @@ import ErrorPage from "./error-page";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Login from './routes/Login';
+import Register from './routes/Register';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { AuthProvider } from './hooks/useAuth';
 
@@ -34,6 +35,11 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
     errorElement: <ErrorPage />,
   }
 ]);

@@ -12,6 +12,25 @@ export const AuthProvider = ({ children }) => {
     // const [user, setUser] = useState(null)
     const [user, setUser] = useLocalStorage("user", null);
 
+    const register = useCallback(async (email, password, firstName, lastName) => {
+        const response = await fetch("auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password, firstName, lastName }),
+        });
+
+        const { data } = await response.json();
+
+        if (response.ok) {
+            setUser(data.user);
+        } else {
+            throw new Error(data.message);
+        }
+        return response
+    }, [setUser])
+
     /**
      * Logs in a user with the provided email and password.
      *
@@ -58,7 +77,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, [setUser]);
 
-    const value = useMemo(() => ({ user, login, logout }), [user, login, logout]);
+    const value = useMemo(() => ({ user, register, login, logout }), [user, register, login, logout]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

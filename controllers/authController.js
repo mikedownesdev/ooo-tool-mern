@@ -66,8 +66,15 @@ const registerUser = async (req, res) => {
         await session.commitTransaction();
 
         res.json({
-            accessToken,
-            refreshToken,
+            message: "success",
+            data: {
+                accessToken,
+                refreshToken,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                }
+            }
         });
 
     } catch (err) {
