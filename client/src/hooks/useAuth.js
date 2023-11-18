@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useMemo } from "react"
 import { useLocalStorage } from "./useLocalStorage"
+import { API_BASE_URL } from "../config"
 
 const AuthContext = createContext();
 
@@ -13,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useLocalStorage("user", null);
 
     const register = useCallback(async (email, password, firstName, lastName) => {
-        const response = await fetch("auth/register", {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }) => {
      */
     const login = useCallback(async (email, password) => {
         //Make a request to the login route
-        const response = await fetch("auth/login", {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -63,7 +64,7 @@ export const AuthProvider = ({ children }) => {
      */
     const logout = useCallback(async () => {
         // Make a request to the logout route
-        const response = await fetch("auth/logout", {
+        const response = await fetch(`${API_BASE_URL}/auth/logout`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
