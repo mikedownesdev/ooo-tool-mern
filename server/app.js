@@ -9,6 +9,7 @@ const port = process.env.PORT || 5000;
 const usersRouter = require('./routes/users');
 const teamsRouter = require('./routes/teams');
 const authRoutes = require('./routes/auth');
+const timeOffRequestsRouter = require('./routes/requests');
 
 
 app.use(cors());
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 app.use('/auth', authRoutes);
 app.use('/users', usersRouter);
 app.use('/teams', teamsRouter);
+app.use('/requests', timeOffRequestsRouter);
 
 
 const dbUrl = process.env.MONGO_DB_URL;

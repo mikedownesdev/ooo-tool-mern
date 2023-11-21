@@ -1,35 +1,37 @@
 const express = require('express');
 const router = express.Router();
 const requestController = require('../controllers/requestController');
+const authMiddleware = require('../middleware/auth');
 
+// TODO: Add auth middleware to the routes that require authentication
 // Create a Time Off Request
-router.post('/requests', requestController.createTimeOffRequest);
+router.post('/', authMiddleware, requestController.createTimeOffRequest);
 
-// List All Time Off Requests
-router.get('/requests', requestController.getAllTimeOffRequests);
+// Get user's requests, both ones they've filed and once's they're managing
+router.get('/me', authMiddleware, requestController.getMyRequests);
 
-// Get a Specific Time Off Request
-router.get('/requests/:id', requestController.getSingleTimeOffRequest);
+// // // Get a Specific Time Off Request
+// router.get('/:id', authMiddleware, requestController.getSingleTimeOffRequest);
 
-// Update a Time Off Request
-router.put('/requests/:id', requestController.updateTimeOffRequest);
+// // // Update a Time Off Request
+// router.put('/:id', authMiddleware, requestController.updateTimeOffRequest);
 
-// Delete a Time Off Request
-router.delete('/requests/:id', requestController.deleteTimeOffRequest);
+// // // Delete a Time Off Request
+// router.delete('/:id', authMiddleware, requestController.deleteTimeOffRequest);
 
-// Approve a Time Off Request (for managers)
-router.put('/requests/:id/approve', requestController.approveTimeOffRequest);
+// // // Approve a Time Off Request (for managers)
+// router.put('/:id/approve', authMiddleware, requestController.approveTimeOffRequest);
 
-// Reject a Time Off Request (for managers)
-router.put('/requests/:id/reject', requestController.rejectTimeOffRequest);
+// // // Reject a Time Off Request (for managers)
+// router.put('/:id/reject', authMiddleware, requestController.rejectTimeOffRequest);
 
-// List Time Off Requests for a Specific Employee
-router.get('/employees/:employeeId/requests', requestController.getTimeOffRequestsForEmployee);
+// // // List Time Off Requests for a Specific Employee
+// router.get('/employees/:employeeId/requests', authMiddleware, requestController.getTimeOffRequestsForEmployee);
 
-// List Time Off Requests by Status
-router.get('/requests', requestController.getTimeOffRequestsByStatus);
+// // List Time Off Requests by Status
+// router.get('/requests', authMiddleware, requestController.getTimeOffRequestsByStatus);
 
-// Filter Time Off Requests by Date Range
-router.get('/requests', requestController.getTimeOffRequestsByDateRange);
+// // Filter Time Off Requests by Date Range
+// router.get('/requests', authMiddleware, requestController.getTimeOffRequestsByDateRange);
 
 module.exports = router;

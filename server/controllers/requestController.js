@@ -1,18 +1,70 @@
-const TimeOffRequest = require('../models/Request');
+const Team = require('../models/Team');
 const Employee = require('../models/Employee');
+const TimeOffRequest = require('../models/Request');
 
-const createTimeOffRequest = (req, res) => {
+const createTimeOffRequest = async (req, res) => {
     // Implement logic to create a new time off request
+    let { startDate, endDate } = req.body;
+    const user = req.user;
+
+    // Parse the dates
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+
+    // Validate body
+
+    // Find the employee record for the user
+    let employee = await Employee.findOne({ user: user.id });
+
+    // Get the default teams
+    let team = await Team.findOne({ name: 'Default' });
+    // let team = employee.team;
+
+    // Create a new time off request
+    try {
+        const newTimeOffRequest = new TimeOffRequest({
+            employee: employee._id,
+            requestType: 'Time-Off Request',
+            team: team._id,
+            startDate,
+            endDate,
+            managerApproval: 'Pending',
+            adminApproval: 'Pending',
+            createdBy: user.id,
+            updatedBy: user.id,
+            processed: false,
+        });
+
+        newTimeOffRequest.save()
+
+        res.json({
+            message: "success",
+            data: { newTimeOffRequest }
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+
 };
 
-const getAllTimeOffRequests = (req, res) => {
-    // Implement logic to get all time off requests
-};
+const getMyRequests = async (req, res) => {
+    // Implement logic to get all of the requests for the current user
+    const user = req.user;
 
-// Define similar handlers for other routes
+    // Find the employee record for the user
+    let employee = await Employee.findOne({ user: user.id });
+
+    // Find all of the time off requests for the employee
+    let timeOffRequests = await TimeOffRequest.find({ employee: employee._id });
+
+    res.json({
+        message: "success",
+        data: { timeOffRequests }
+    });
+};
 
 module.exports = {
     createTimeOffRequest,
-    getAllTimeOffRequests,
-    // Export other handlers
+    getMyRequests,
 };
