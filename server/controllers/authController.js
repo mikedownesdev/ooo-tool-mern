@@ -68,11 +68,11 @@ const registerUser = async (req, res) => {
         res.json({
             message: "success",
             data: {
-                accessToken,
-                refreshToken,
                 user: {
                     id: user.id,
                     email: user.email,
+                    accessToken,
+                    refreshToken,
                 }
             }
         });
@@ -128,11 +128,11 @@ const loginUser = async (req, res) => {
         res.json({
             message: "success",
             data: {
-                accessToken,
-                refreshToken,
                 user: {
                     id: user.id,
                     email: user.email,
+                    accessToken,
+                    refreshToken,
                 }
             }
         });
