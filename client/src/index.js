@@ -10,6 +10,7 @@ import ErrorPage from "./error-page";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Login from './routes/Login';
+import Home from './routes/Home';
 import Register from './routes/Register';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { AuthProvider } from './hooks/useAuth';
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
     loader: rootLoader,
     errorElement: <ErrorPage />,
     children: [
+      {
+        path: "/",
+        element: <Home />
+      },
       {
         path: "requests/new",
         element: <NewRequest />,
