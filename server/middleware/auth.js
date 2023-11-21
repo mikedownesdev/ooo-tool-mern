@@ -6,7 +6,11 @@ const authMiddleware = async (req, res, next) => {
 
     // Check if token exists
     if (!token) {
-        return res.status(401).json({ msg: 'No token, authorization denied' });
+        console.error('No token was sent, authorization denied');
+        return res.status(401).json({
+            success: false,
+            message: 'No token, authorization denied'
+        });
     }
 
     try {
@@ -19,7 +23,10 @@ const authMiddleware = async (req, res, next) => {
         next();
     } catch (err) {
         console.error(err.message);
-        res.status(401).json({ msg: 'Token is not valid' });
+        res.status(401).json({
+            success: false,
+            message: 'Token is not valid'
+        });
     }
 };
 
