@@ -6,19 +6,19 @@ const requestSchema = new mongoose.Schema({
     team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
+    managerApproval: { type: String, enum: ['Approved', 'Denied', 'Pending', 'Not Needed'], required: true },
+    adminApproval: { type: String, enum: ['Approved', 'Denied', 'Pending', 'Not Needed'], required: true },
+    processed: { type: Boolean, required: true },
     ptoHours: { type: Number, min: 0, required: false },
     utoHours: { type: Number, min: 0, required: false },
     otHours: { type: Number, min: 0, required: false },
-    notes: { type: String, required: true },
-    managerApproval: { type: String, enum: ['Approved', 'Denied', 'Pending', 'Not Needed'], required: true },
-    adminApproval: { type: String, enum: ['Approved', 'Denied', 'Admin Approval Pending', 'Not Needed', 'Manager Approval Pending'], required: true },
-    Processed: { type: Boolean, required: true },
+    notes: { type: String, required: false },
 
     // System Fields
     createdAt: { type: Date, default: Date.now },
     updatetdAt: { type: Date, default: Date.now },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
-module.exports = mongoose.model('Team', teamSchema);
+module.exports = mongoose.model('Request', requestSchema);
