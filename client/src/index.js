@@ -12,6 +12,7 @@ import reportWebVitals from './reportWebVitals';
 import Login from './routes/Login';
 import Home from './routes/Home';
 import Register from './routes/Register';
+import RequestDetails from './routes/RequestDetails';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { AuthProvider } from './hooks/useAuth';
 
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
         path: "requests/new",
         element: <NewRequest />,
         action: newRequestAction,
+      },
+      {
+        path: "requests/:id",
+        element: <RequestDetails />,
       },
       {
         path: "settings",

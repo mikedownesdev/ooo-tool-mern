@@ -22,7 +22,7 @@ const createTimeOffRequest = async (req, res) => {
 
     // Create a new time off request
     try {
-        const newTimeOffRequest = new TimeOffRequest({
+        const request = new TimeOffRequest({
             employee: employee._id,
             requestType: 'Time-Off Request',
             team: team._id,
@@ -35,11 +35,11 @@ const createTimeOffRequest = async (req, res) => {
             processed: false,
         });
 
-        newTimeOffRequest.save()
+        request.save()
 
         res.json({
             message: "success",
-            data: { newTimeOffRequest }
+            data: { request }
         });
     } catch (err) {
         console.error(err.message);

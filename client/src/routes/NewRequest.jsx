@@ -1,27 +1,20 @@
-import React, { useState } from 'react';
-import { Form } from 'react-router-dom';
-import { createRequest } from '../services/createRequest';
+import { Form, redirect } from 'react-router-dom';
+import { createTimeOffRequest } from '../services/createTimeOffRequest';
 
-export async function action() {
-    const request = await createRequest()
-    return { request };
+// TODO create functions to handle validate the form data upon user input
+
+export async function action({ request }) {
+
+    // TODO validate the form data upon
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData);
+    const responseData = await createTimeOffRequest(data);
+    const timeOffRequestId = responseData.request._id;
+    return redirect(`/requests/${timeOffRequestId}`);
+
 }
 
 export default function NewRequest() {
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [reason, setReason] = useState('');
-
-    // const handleSubmit = (event) => {
-    //     event.preventDefault();
-    //     // Here you would usually make an API call to the backend to save the request
-    //     console.log('Out of Office Request:', { startDate, endDate, reason });
-    //     // Reset the form fields
-    //     setStartDate('');
-    //     setEndDate('');
-    //     setReason('');
-    // };
-
     return (
         <div className="out-of-office-request">
             <h2>New Out of Office Request</h2>
@@ -30,9 +23,8 @@ export default function NewRequest() {
                     <label htmlFor="start-date">Start Date</label>
                     <input
                         type="date"
-                        id="start-date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
+                        id="startDate"
+                        name="startDate"
                         required
                     />
                 </div>
@@ -40,9 +32,8 @@ export default function NewRequest() {
                     <label htmlFor="end-date">End Date</label>
                     <input
                         type="date"
-                        id="end-date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
+                        id="endDate"
+                        name="endDate"
                         required
                     />
                 </div>
@@ -50,8 +41,7 @@ export default function NewRequest() {
                     <label htmlFor="reason">Reason</label>
                     <textarea
                         id="reason"
-                        value={reason}
-                        onChange={(e) => setReason(e.target.value)}
+                        name="reason"
                         required
                     />
                 </div>
