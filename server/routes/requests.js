@@ -3,15 +3,14 @@ const router = express.Router();
 const requestController = require('../controllers/requestController');
 const authMiddleware = require('../middleware/auth');
 
-// TODO: Add auth middleware to the routes that require authentication
 // Create a Time Off Request
 router.post('/', authMiddleware, requestController.createTimeOffRequest);
 
 // Get user's requests, both ones they've filed and once's they're managing
 router.get('/me', authMiddleware, requestController.getMyRequests);
 
-// // // Get a Specific Time Off Request
-// router.get('/:id', authMiddleware, requestController.getSingleTimeOffRequest);
+// Get a Specific Time Off Request
+router.get('/:id', authMiddleware, requestController.getRequestById);
 
 // // // Update a Time Off Request
 // router.put('/:id', authMiddleware, requestController.updateTimeOffRequest);

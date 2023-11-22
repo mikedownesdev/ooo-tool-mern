@@ -48,6 +48,23 @@ const createTimeOffRequest = async (req, res) => {
 
 };
 
+const getRequestById = async (req, res) => {
+    // Implement logic to get a specific time off request
+    const { id } = req.params;
+
+    try {
+        const request = await TimeOffRequest.findById(id);
+
+        res.json({
+            message: "success",
+            data: { request }
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+}
+
 const getMyRequests = async (req, res) => {
     // Implement logic to get all of the requests for the current user
     const user = req.user;
@@ -66,5 +83,6 @@ const getMyRequests = async (req, res) => {
 
 module.exports = {
     createTimeOffRequest,
+    getRequestById,
     getMyRequests,
 };

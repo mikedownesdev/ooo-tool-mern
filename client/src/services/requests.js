@@ -24,3 +24,25 @@ export async function createTimeOffRequest(newRequestData) {
 
     return data
 }
+
+export async function fetchRequestById(requestId) {
+
+    const userString = localStorage.getItem("user");
+    const user = JSON.parse(userString);
+    const accessToken = user.accessToken;
+
+    const response = await fetch(`${API_BASE_URL}/requests/${requestId}`, {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": accessToken
+        },
+    })
+
+    const { message, data } = await response.json();
+
+    if (!response.ok) {
+        throw new Error(message);
+    }
+
+    return data
+}

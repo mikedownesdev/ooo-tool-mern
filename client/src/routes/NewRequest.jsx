@@ -1,5 +1,5 @@
 import { Form, redirect } from 'react-router-dom';
-import { createTimeOffRequest } from '../services/createTimeOffRequest';
+import { createTimeOffRequest } from '../services/requests';
 
 // TODO create functions to handle validate the form data upon user input
 
