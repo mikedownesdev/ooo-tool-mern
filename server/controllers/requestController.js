@@ -69,16 +69,21 @@ const getMyRequests = async (req, res) => {
     // Implement logic to get all of the requests for the current user
     const user = req.user;
 
-    // Find the employee record for the user
-    let employee = await Employee.findOne({ user: user.id });
+    try {
+        // Find the employee record for the user
+        let employee = await Employee.findOne({ user: user.id });
 
-    // Find all of the time off requests for the employee
-    let timeOffRequests = await TimeOffRequest.find({ employee: employee._id });
+        // Find all of the time off requests for the employee
+        let requests = await TimeOffRequest.find({ employee: employee._id });
 
-    res.json({
-        message: "success",
-        data: { timeOffRequests }
-    });
+        res.json({
+            message: "success",
+            data: { requests }
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
 };
 
 module.exports = {

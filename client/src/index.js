@@ -10,7 +10,7 @@ import ErrorPage from "./error-page";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Login from './routes/Login';
-import Home from './routes/Home';
+import Home, { loader as homeLoader } from './routes/Home';
 import Register from './routes/Register';
 import RequestDetails, { loader as requestDetailsLoader } from './routes/RequestDetails';
 import { ProtectedRoute } from './routes/ProtectedRoute';
@@ -25,7 +25,8 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />
+        element: <Home />,
+        loader: homeLoader
       },
       {
         path: "requests/new",
