@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Login() {
     const { login } = useAuth();
@@ -47,6 +47,7 @@ function Login() {
                     />
                 </div>
                 <button type="submit">Login</button>
+                <Link to="/register">Register</Link>
             </form>
         </div>
     );
