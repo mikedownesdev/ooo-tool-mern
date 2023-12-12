@@ -25,7 +25,7 @@ const createTimeOffRequest = async (req, res) => {
         const request = new TimeOffRequest({
             employee: employee._id,
             requestType: 'Time-Off Request',
-            team: team._id,
+            team: team._id ? team._id : null,
             startDate,
             endDate,
             managerApproval: 'Pending',
@@ -65,6 +65,40 @@ const getRequestById = async (req, res) => {
     }
 }
 
+const modifyRequest = async (req, res) => {
+    // Implement logic to update a specific time off request
+    const { id } = req.params;
+    const user = req.user;
+
+    try {
+        const request = await TimeOffRequest.findById(id);
+
+        // Check if the user is authorized to update the request
+        if (user.id !== request.createdBy._id.toString()) {
+            return res.status(401).json({
+                message: "error",
+                data: { message: "You are not authorized to update this request" }
+            });
+        }
+
+        // Update the request
+        request.startDate = req.body.startDate;
+        request.endDate = req.body.endDate;
+        request.updatedBy = user.id;
+        request.updatetdAt = Date.now();
+
+        await request.save();
+
+        res.json({
+            message: "success",
+            data: { request }
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+}
+
 const getMyRequests = async (req, res) => {
     // Implement logic to get all of the requests for the current user
     const user = req.user;
@@ -90,4 +124,5 @@ module.exports = {
     createTimeOffRequest,
     getRequestById,
     getMyRequests,
+    modifyRequest,
 };

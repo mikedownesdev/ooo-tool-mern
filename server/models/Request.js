@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const requestSchema = new mongoose.Schema({
     employee: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
     requestType: { type: String, enum: ["Time-Off Request", "Overtime Request"], required: true },
-    team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
+    team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team', required: false },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     managerApproval: { type: String, enum: ['Approved', 'Denied', 'Pending', 'Not Needed'], required: true },
