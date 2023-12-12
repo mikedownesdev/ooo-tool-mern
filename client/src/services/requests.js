@@ -70,3 +70,27 @@ export async function fetchMyRequests() {
 
     return data
 }
+
+export async function modifyRequest(requestId, updatedRequestData) {
+
+    const userString = localStorage.getItem("user");
+    const user = JSON.parse(userString);
+    const accessToken = user.accessToken;
+
+    const response = await fetch(`${API_BASE_URL}/requests/${requestId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": accessToken
+        },
+        body: JSON.stringify(updatedRequestData),
+    })
+
+    const { message, data } = await response.json();
+
+    if (!response.ok) {
+        throw new Error(message);
+    }
+
+    return data
+}

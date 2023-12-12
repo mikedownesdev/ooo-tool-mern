@@ -12,6 +12,7 @@ import reportWebVitals from './reportWebVitals';
 import Login from './routes/Login';
 import Home, { loader as homeLoader } from './routes/Home';
 import Register from './routes/Register';
+import EditRequestDetails, { loader as editRequestDetailsLoader, action as editRequestDetailsAction } from './routes/EditRequestDetails';
 import RequestDetails, { loader as requestDetailsLoader } from './routes/RequestDetails';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { AuthProvider } from './hooks/useAuth';
@@ -37,6 +38,12 @@ const router = createBrowserRouter([
         path: "requests/:id",
         loader: requestDetailsLoader,
         element: <RequestDetails />,
+      },
+      {
+        path: "requests/:id/edit",
+        loader: editRequestDetailsLoader,
+        action: editRequestDetailsAction,
+        element: <EditRequestDetails />
       },
       {
         path: "settings",

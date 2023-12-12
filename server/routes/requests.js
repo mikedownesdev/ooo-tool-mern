@@ -12,8 +12,8 @@ router.get('/me', authMiddleware, requestController.getMyRequests);
 // Get a Specific Time Off Request
 router.get('/:id', authMiddleware, requestController.getRequestById);
 
-// // // Update a Time Off Request
-// router.put('/:id', authMiddleware, requestController.updateTimeOffRequest);
+// // Update a Time Off Request
+router.put('/:id', authMiddleware, requestController.modifyRequest);
 
 // // // Delete a Time Off Request
 // router.delete('/:id', authMiddleware, requestController.deleteTimeOffRequest);
