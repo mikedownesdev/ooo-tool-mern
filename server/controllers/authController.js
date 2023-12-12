@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 const RefreshToken = require('../models/RefreshToken');
+const Team = require('../models/Team');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { hashPassword } = require('../utils/password');
@@ -37,9 +38,16 @@ const registerUser = async (req, res) => {
 
         await user.save({ session });
 
+        // Add the employee to the default team
+        const defaultTeam = await Team.findOne({ name: 'Default' }).session(session);
+        if (!defaultTeam) {
+            throw new Error('Default team not found');
+        }
+
         // Create a new employee linked to the user
         const employee = new Employee({
             user: user._id,
+            team: defaultTeam._id,
             firstName,
             lastName,
         });
