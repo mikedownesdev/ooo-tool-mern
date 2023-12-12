@@ -1,33 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom"
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root, { loader as rootLoader } from "./routes/root";
 import NewRequest, { action as newRequestAction } from "./routes/NewRequest";
 import ErrorPage from "./error-page";
-import './index.css';
-import reportWebVitals from './reportWebVitals';
-import Login from './routes/Login';
-import Home, { loader as homeLoader } from './routes/Home';
-import Register from './routes/Register';
-import EditRequestDetails, { loader as editRequestDetailsLoader, action as editRequestDetailsAction } from './routes/EditRequestDetails';
-import RequestDetails, { loader as requestDetailsLoader } from './routes/RequestDetails';
-import { ProtectedRoute } from './routes/ProtectedRoute';
-import { AuthProvider } from './hooks/useAuth';
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import Login from "./routes/Login";
+import Home, { loader as homeLoader } from "./routes/Home";
+import Register from "./routes/Register";
+import EditRequestDetails, {
+  loader as editRequestDetailsLoader,
+  action as editRequestDetailsAction,
+} from "./routes/EditRequestDetails";
+import RequestDetails, {
+  loader as requestDetailsLoader,
+} from "./routes/RequestDetails";
+import { ProtectedRoute } from "./routes/ProtectedRoute";
+import { AuthProvider } from "./hooks/useAuth";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <ProtectedRoute><Root /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <Root />
+      </ProtectedRoute>
+    ),
     loader: rootLoader,
     errorElement: <ErrorPage />,
     children: [
       {
         path: "/",
         element: <Home />,
-        loader: homeLoader
+        loader: homeLoader,
       },
       {
         path: "requests/new",
@@ -43,13 +49,13 @@ const router = createBrowserRouter([
         path: "requests/:id/edit",
         loader: editRequestDetailsLoader,
         action: editRequestDetailsAction,
-        element: <EditRequestDetails />
+        element: <EditRequestDetails />,
       },
       {
         path: "settings",
-        element: <div>Settings</div>
-      }
-    ]
+        element: <div>Settings</div>,
+      },
+    ],
   },
   {
     path: "/login",
@@ -60,10 +66,10 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
     errorElement: <ErrorPage />,
-  }
+  },
 ]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <AuthProvider>
