@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Root, { loader as rootLoader } from "./routes/root";
+import Root from "./routes/root";
 import NewRequest, { action as newRequestAction } from "./routes/NewRequest";
 import ErrorPage from "./error-page";
 import "./index.css";
@@ -27,7 +27,6 @@ const router = createBrowserRouter([
         <Root />
       </ProtectedRoute>
     ),
-    loader: rootLoader,
     errorElement: <ErrorPage />,
     children: [
       {
